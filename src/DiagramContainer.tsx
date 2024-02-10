@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import Rectangle from "./Rectangle";
 
 const Diagram: React.FC = () => {
+    const [rectangles, setRectangles] = useState<Rectangle[]>([new Rectangle(50, 50, 100, 100)])
+
     return (
         <div
             id="global-board"
@@ -14,7 +17,11 @@ const Diagram: React.FC = () => {
                 display: 'flex',
                 backgroundColor: 'red'
             }}
-        ></div>
+        >
+            {rectangles.map((rectangle) => (
+                <React.Fragment>{rectangle.getRectangleComponent()}</React.Fragment>
+            ))}
+        </div>
     )
 }
 
