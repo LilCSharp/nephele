@@ -1,0 +1,7 @@
+.rectangle {
+    background: blueviolet;
+}
+
+.rectangle:hover {
+    background: red;
+}

@@ -1,4 +1,5 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, MouseEvent } from "react";
+import "./Rectangle.css";
 
 class Rectangle {
     x: number;
@@ -13,7 +14,7 @@ class Rectangle {
         this.height = height;
     }
 
-    getRectangleComponent(): React.ReactElement {
+    getRectangleComponent(index: number, movementCallback: (e: MouseEvent<HTMLDivElement> ,n: number) => void): React.ReactElement {
         const style: CSSProperties = {
             position: 'absolute',
             left: this.x,
@@ -21,10 +22,10 @@ class Rectangle {
             width: this.width,
             height: this.height,
             borderRadius: '8px',
-            background: 'blue',
+            cursor: "grabbing"
         };
 
-        return <div style={style}></div>
+        return <div className="rectangle" style={style} onMouseDown={(e: MouseEvent<HTMLDivElement>) => movementCallback(e, index)}></div>
     }
 }
 
