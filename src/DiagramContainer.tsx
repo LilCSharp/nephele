@@ -1,6 +1,7 @@
 import React, { useState, MouseEvent } from "react";
 import Rectangle from "./Rectangle";
 import { RectangleProps } from "./types";
+import "./Diagram.css";
 
 const Diagram: React.FC = () => {
     const [selection, setSelection] = useState<number | null>(null);
@@ -62,7 +63,7 @@ const Diagram: React.FC = () => {
     return (
         <div
             id="global-board"
-            className="diagram-container-wrapper"
+            className="diagram-body diagram-container-wrapper"
             style={{
                 position: 'absolute',
                 top: 0,
