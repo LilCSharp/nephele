@@ -7,6 +7,7 @@ const Diagram: React.FC = () => {
     const [selection, setSelection] = useState<number | null>(null);
     const [initialX, setInitialX] = useState<number>(0);
     const [initialY, setInitialY] = useState<number>(0);
+    const [backgroundPosition, setBackgroundPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0});
 
     const selectBoard = () => {
         setSelection(-1);
@@ -36,6 +37,10 @@ const Diagram: React.FC = () => {
             }));
 
             setRectangles(updatedRectangles);
+            setBackgroundPosition(prevBackgroundPosition => ({
+                x: prevBackgroundPosition.x + deltaX,
+                y: prevBackgroundPosition.y + deltaY
+            }));
         } else if (selection != null) {
             const updatedRectangles = rectangles.map((rectangle, index) => {
                 if (selection === index) {
@@ -70,7 +75,9 @@ const Diagram: React.FC = () => {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                display: 'flex'
+                display: 'flex',
+                backgroundPositionX: `${backgroundPosition.x}px`,
+                backgroundPositionY: `${backgroundPosition.y}px`,
             }}
             onMouseDown={selectBoard}
             onMouseMove={translateElement}
