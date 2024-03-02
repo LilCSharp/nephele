@@ -22,7 +22,8 @@ const Diagram: React.FC = () => {
 
     const [rectangles, setRectangles] = useState<RectangleProps[]>([
         { x: 50, y: 50, width: 100, height: 100, index: 0, movementCallback: selectElement },
-        { x: 200, y: 200, width: 100, height: 100, index: 1, movementCallback: selectElement }
+        { x: 200, y: 200, width: 100, height: 100, index: 1, movementCallback: selectElement },
+        { x: -100, y: 500, width: 200, height: 200, index: 2, movementCallback: selectElement }
     ]);
 
     const translateElement = (e: MouseEvent<HTMLDivElement>) => {
@@ -76,6 +77,7 @@ const Diagram: React.FC = () => {
                 width: '100%',
                 height: '100%',
                 display: 'flex',
+                overflow: 'clip',
                 backgroundPositionX: `${backgroundPosition.x}px`,
                 backgroundPositionY: `${backgroundPosition.y}px`,
             }}
