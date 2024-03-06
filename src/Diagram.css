@@ -1,4 +1,13 @@
 .diagram-body {
-    background-size: 40px 40px;
-    background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
-  }
+  background-size: 40px 40px;
+  background-image: radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px);
+}
+
+.diagram-container-wrapper {
+  width: calc(100% - 200px);
+  height: 100%;
+  top: 0;
+  left: 200px;
+  position: fixed;
+  overflow: clip;
+}
