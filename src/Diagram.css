@@ -4,10 +4,10 @@
 }
 
 .diagram-container-wrapper {
-  width: calc(100% - 200px);
+  width: 90%;
   height: 100%;
   top: 0;
-  left: 200px;
+  left: 10%;
   position: fixed;
   overflow: clip;
 }
