@@ -8,7 +8,7 @@ class Rectangle extends React.Component<RectangleProps> {
     }
 
     render(): React.ReactNode {
-        const { x, y, width, height, index, movementCallback } = this.props;
+        const { id ,x, y, width, height } = this.props;
 
         const style: CSSProperties = {
             position: 'absolute',
@@ -21,7 +21,7 @@ class Rectangle extends React.Component<RectangleProps> {
         };
 
         return (
-            <div className="rectangle" style={style} onMouseDown={(e: MouseEvent<HTMLDivElement>) => movementCallback(e, index)}></div>
+            <div className="rectangle" style={style}></div>
         )
     }
 }

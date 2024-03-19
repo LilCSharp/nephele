@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nephele
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nephele
+  template:
+    metadata:
+      labels:
+        app: nephele
+    spec:
+      containers:
+        - name: nephele
+          image: nephele:latest
+          ports:
+            - containerPort: 3000

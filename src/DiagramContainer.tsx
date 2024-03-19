@@ -2,35 +2,40 @@ import React, { useState, MouseEvent } from "react";
 import Rectangle from "./Rectangle";
 import { RectangleProps } from "./types";
 import "./Diagram.css";
+import "./Rectangle.css";
 
 const Diagram: React.FC = () => {
-    const [selection, setSelection] = useState<number | null>(null);
-    const [initialX, setInitialX] = useState<number>(0);
-    const [initialY, setInitialY] = useState<number>(0);
-    const [backgroundPosition, setBackgroundPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0});
-
-    const selectBoard = () => {
-        setSelection(-1);
-        console.log("Board selected");
-    }
-
-    const selectElement = (e: MouseEvent<HTMLDivElement>, index: number) => {
-        e.stopPropagation();
-        setSelection(index);
-        console.log("Rect selected");
-    }
-
     const [rectangles, setRectangles] = useState<RectangleProps[]>([
-        { x: 50, y: 50, width: 100, height: 100, index: 0, movementCallback: selectElement },
-        { x: 200, y: 200, width: 100, height: 100, index: 1, movementCallback: selectElement },
-        { x: -100, y: 500, width: 200, height: 200, index: 2, movementCallback: selectElement }
+        { id: 0, x: 500, y: 500, width: 100, height: 100 },
     ]);
+    const [isDragging, setIsDragging] = useState<boolean>(false);
+    const [activeRectangle, setActiveRectangle] = useState<number | null>(null);
+    const [offsetX, setOffsetX] = useState<number>(0);
+    const [offsetY, setOffsetY] = useState<number>(0);
+    const [backgroundPositionX, setBackgroundPositionX] = useState<number>(0);
+    const [backgroundPositionY, setBackgroundPositionY] = useState<number>(0);
+
+    const selectDiagram = (e: MouseEvent<HTMLDivElement>) => {
+        setIsDragging(true);
+        setOffsetX(e.clientX);
+        setOffsetY(e.clientY);
+    }
+
+    const selectElement = (e: MouseEvent<HTMLDivElement>, id: number) => {
+        e.stopPropagation();
+        setIsDragging(true);
+        setOffsetX(e.clientX);
+        setOffsetY(e.clientY);
+        setActiveRectangle(id);
+    }
 
     const translateElement = (e: MouseEvent<HTMLDivElement>) => {
-        const deltaX = e.clientX - initialX;
-        const deltaY = e.clientY - initialY;
+        if(!isDragging) return;
 
-        if (selection === -1) {
+        const deltaX = e.clientX - offsetX;
+        const deltaY = e.clientY - offsetY;
+
+        if (activeRectangle === null) {
             const updatedRectangles = rectangles.map(rectangle => ({
                 ...rectangle,
                 x: rectangle.x + deltaX,
@@ -38,13 +43,11 @@ const Diagram: React.FC = () => {
             }));
 
             setRectangles(updatedRectangles);
-            setBackgroundPosition(prevBackgroundPosition => ({
-                x: prevBackgroundPosition.x + deltaX,
-                y: prevBackgroundPosition.y + deltaY
-            }));
-        } else if (selection != null) {
-            const updatedRectangles = rectangles.map((rectangle, index) => {
-                if (selection === index) {
+            setBackgroundPositionX(backgroundPositionX + deltaX);
+            setBackgroundPositionY(backgroundPositionY + deltaY);
+        } else {
+            const updatedRectangles = rectangles.map((rectangle) => {
+                if (activeRectangle === rectangle.id) {
                     return {
                         ...rectangle,
                         x: rectangle.x + deltaX,
@@ -56,14 +59,16 @@ const Diagram: React.FC = () => {
             });
 
             setRectangles(updatedRectangles);
+            console.log(updatedRectangles)
         }
 
-        setInitialX(e.clientX);
-        setInitialY(e.clientY);
+        setOffsetX(e.clientX);
+        setOffsetY(e.clientY);
     }
 
     const endSelection = () => {
-        setSelection(null);
+        setActiveRectangle(null);
+        setIsDragging(false);
     }
 
     return (
@@ -71,17 +76,21 @@ const Diagram: React.FC = () => {
             id="global-board"
             className="diagram-body diagram-container-wrapper"
             style={{
-                backgroundPositionX: `${backgroundPosition.x}px`,
-                backgroundPositionY: `${backgroundPosition.y}px`,
+                backgroundPositionX: `${backgroundPositionX}px`,
+                backgroundPositionY: `${backgroundPositionY}px`,
             }}
-            onMouseDown={selectBoard}
+            onMouseDown={selectDiagram}
             onMouseMove={translateElement}
             onMouseUp={endSelection}
         >
-            {rectangles.map((rectangle, index) => (
-                <React.Fragment key={index}>
-                    <Rectangle {...rectangle} />
-                </React.Fragment>
+            {rectangles.map((rectangle) => (
+                <div
+                    key={rectangle.id}
+                    id={rectangle.id.toString()}
+                    className="rectangle"
+                    style={{ position: 'relative', left: rectangle.x, top: rectangle.y, width: rectangle.width, height: rectangle.height, borderRadius: '8px', cursor: "grabbing" }}
+                    onMouseDown={(e) => selectElement(e, rectangle.id)}
+                ></div>
             ))}
         </div>
     );
