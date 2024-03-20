@@ -4,16 +4,38 @@ import { RectangleProps } from "./types";
 import "./Diagram.css";
 import "./Rectangle.css";
 
-const Diagram: React.FC = () => {
+interface DiagramProps {
+    isCreating: boolean
+    createEnd: () => void
+}
+
+const Diagram: React.FC<DiagramProps> = ({isCreating, createEnd}) => {
     const [rectangles, setRectangles] = useState<RectangleProps[]>([
         { id: 0, x: 500, y: 500, width: 100, height: 100 },
     ]);
+    const [idCounter, setIdCounter] = useState<number>(1);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [activeRectangle, setActiveRectangle] = useState<number | null>(null);
     const [offsetX, setOffsetX] = useState<number>(0);
     const [offsetY, setOffsetY] = useState<number>(0);
     const [backgroundPositionX, setBackgroundPositionX] = useState<number>(0);
     const [backgroundPositionY, setBackgroundPositionY] = useState<number>(0);
+
+    const createElementDefault = (e: MouseEvent<HTMLDivElement>) => {
+        const bounds = e.currentTarget.getBoundingClientRect();
+        setRectangles([
+            ...rectangles, 
+            {
+                id: idCounter,
+                x: e.clientX - 50 - bounds.left,
+                y: e.clientY - 50 - bounds.top,
+                width: 100,
+                height: 100
+            }
+        ])
+        setIdCounter(idCounter + 1);
+        createEnd();
+    }
 
     const selectDiagram = (e: MouseEvent<HTMLDivElement>) => {
         setIsDragging(true);
@@ -59,7 +81,6 @@ const Diagram: React.FC = () => {
             });
 
             setRectangles(updatedRectangles);
-            console.log(updatedRectangles)
         }
 
         setOffsetX(e.clientX);
@@ -78,8 +99,10 @@ const Diagram: React.FC = () => {
             style={{
                 backgroundPositionX: `${backgroundPositionX}px`,
                 backgroundPositionY: `${backgroundPositionY}px`,
+                cursor: isCreating ? `crosshair` : `default`,
             }}
-            onMouseDown={selectDiagram}
+            onMouseDown={ isCreating ? () => {} : selectDiagram }
+            onClick={ isCreating ? createElementDefault : () => {} }
             onMouseMove={translateElement}
             onMouseUp={endSelection}
         >
@@ -88,8 +111,8 @@ const Diagram: React.FC = () => {
                     key={rectangle.id}
                     id={rectangle.id.toString()}
                     className="rectangle"
-                    style={{ position: 'relative', left: rectangle.x, top: rectangle.y, width: rectangle.width, height: rectangle.height, borderRadius: '8px', cursor: "grabbing" }}
-                    onMouseDown={(e) => selectElement(e, rectangle.id)}
+                    style={{ position: 'absolute', left: rectangle.x, top: rectangle.y, width: rectangle.width, height: rectangle.height, borderRadius: '8px', cursor: "grabbing" }}
+                    onMouseDown={ isCreating ? () => {} : (e) => selectElement(e, rectangle.id)}
                 ></div>
             ))}
         </div>
